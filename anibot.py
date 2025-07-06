@@ -23,7 +23,7 @@ def is_docker():
   if not os.path.isfile("/proc/" + str(os.getpid()) + "/cgroup"): return False
   with open("/proc/" + str(os.getpid()) + "/cgroup") as f:
     for line in f:
-      if re.match("\d+:[\w=]+:/docker(-[ce]e)?/\w+", line):
+      if re.match(r"\d+:[\w=]+:/docker(-[ce]e)?/\w+", line):
         return True
     return False
 
@@ -55,7 +55,7 @@ def loadconfig():
     except Exception as e:
         printException(e)
         print("ani.json nicht gefunden, ")
-        return False, False, False, False, False, False, False, False, False, False, False, False, False
+        return False, False, False, False, False, False, False, False, False
     for key in data:
         if(key == "settings"):
             try:
@@ -69,19 +69,11 @@ def loadconfig():
                 myjd_user = value['myjd_user']
                 myjd_pass = value['myjd_pw']
                 myjd_device = value['myjd_device']
-                jd_deprecated = value['jd_deprecated']
-                jd_deprecatedport = value['jd_deprecatedport']
             except Exception as e:
                 printException(e)
                 print("Fehlerhafte ani.json Konfiguration")
-                return False, False, False, False, False, False, False, False, False, False, False
-            try:
-                al_user = value['al_user']
-                al_pass = value['al_pass']
-            except:
-                al_user = None
-                al_pass = None
-    return jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device,jd_deprecated,jd_deprecatedport, al_user, al_pass
+                return False, False, False, False, False, False, False, False, False
+    return jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device
 
 def editconfig():
     try:
@@ -101,8 +93,6 @@ def editconfig():
                 myjd_user = value['myjd_user']
                 myjd_pass = value['myjd_pw']
                 myjd_device = value['myjd_device']
-                jd_deprecated = value['jd_deprecated']
-                jd_deprecatedport = value['jd_deprecatedport']
     except:
         jdhost = ""
         hoster = ""
@@ -113,28 +103,31 @@ def editconfig():
         myjd_user = ""
         myjd_pw = ""
         myjd_device = ""
-        jd_deprecated = ""
-        jd_deprecatedport = ""
 
-    if(hoster == 1):
+    if(hoster == 2):
         hosterstr = "rapidgator"
-    elif(hoster == 0):
+    if(hoster == 1):
         hosterstr = "ddownload"
+    elif(hoster == 0):
+        hosterstr = "uploaded"
     changehoster  = True
     if(hoster != ""):
         if(compare(input("Dein gewählter hoster: " + hosterstr + ", möchtest du ihn wechseln? [J/N]: "), {"j", "ja", "yes", "y"}) == False):
             changehoster = False
     if(changehoster):
         while(True):
-            host = input("Welchen hoster bevorzugst du? rapidgator oder ddownload: ")
-            if("ddownload" in host):
+            host = input("Welchen hoster bevorzugst du? uploaded, rapidgator oder ddownload: ")
+            if("uploaded" in host):
+                hoster = animeloads.UPLOADED
+                break
+            elif("ddownload" in host):
                 hoster = animeloads.DDOWNLOAD
                 break
             elif("rapidgator" in host):
                 hoster = animeloads.RAPIDGATOR
                 break
             else:
-                print("Bitte gib entweder rapidgator oder ddowwnload ein")
+                print("Bitte gib entweder uploaded, rapidgator oder ddowwnload ein")
 
     change_jdhost = True
 
@@ -266,9 +259,7 @@ def editconfig():
         "timedelay": timedelay,
         "myjd_user": jd_user,
         "myjd_pw": jd_pass,
-        "myjd_device": jd_device,
-        "jd_deprecated": jd_deprecated,
-        "jd_deprecatedport" : jd_deprecatedport
+        "myjd_device": jd_device
     }
 
     ani_exists = True
@@ -297,12 +288,12 @@ def editconfig():
         jfile.close
 
 def addAnime():
-    jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device,jd_deprecated, jd_deprecatedport, al_user, al_pass = loadconfig()
+    jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device = loadconfig()
  
     while(jdhost == False):
         print("Noch keine oder Fehlerhafte konfiguration, leite weiter zu Einstellungen")
         editconfig()
-        jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device, al_user, al_pass = loadconfig()
+        jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device = loadconfig()
 
     al = animeloads(browser=browser, browserloc=browserlocation)
     exit = False
@@ -377,13 +368,9 @@ def addAnime():
             print("\n")
 
             customPackage = ""
+
             if(compare(input("Möchtest du dem Anime einen spezifischen Paketnamen geben? Andernfalls wird der Name des Anime genutzt [J/N]: "), {"j", "ja", "yes", "y"}) == True):
                 customPackage = input("Packagename: ")
-
-            destinationFolder = ""
-            if jd_deprecated:
-                if (compare(input("Möchtest du dem Anime an einen bestimmten Ort speichern? (z.B. \"C://anime/s2\" ) [J/N]: "), {"j", "ja", "yes", "y"}) == True):
-                    destinationFolder = input("Pfad: ")
 
             animedata = {
                 "name": anime.getName(),
@@ -391,8 +378,7 @@ def addAnime():
                 "releaseID": relchoice,
                 "episodes": curEpisodes,
                 "url": anime.getURL(),
-                "customPackage": customPackage,
-                "destinationFolder": destinationFolder
+                "customPackage": customPackage
             }
         
             os.makedirs(os.path.dirname(botfolder), exist_ok=True)
@@ -545,21 +531,7 @@ def addAnime():
                 "url": anime.getURL(),
                 "customPackage": customPackage
             }
-
-            if jd_deprecated:
-                destinationFolder = ""
-                if (compare(input("Möchtest du dem Anime an einen bestimmten Ort speichern? (z.B. \"C://anime/s2\" ) [J/N]: "), {"j", "ja", "yes", "y"}) == True):
-                    destinationFolder = input("Pfad: ")
-
-                animedata = {
-                    "name": anime.getName(),
-                    "missing": [],
-                    "releaseID": relchoice,
-                    "episodes": curEpisodes,
-                    "url": anime.getURL(),
-                    "customPackage": customPackage,
-                    "destinationFolder": destinationFolder
-                }
+    
 
             os.makedirs(os.path.dirname(botfolder), exist_ok=True)
             f = open(botfile, "r")
@@ -610,7 +582,7 @@ def addAnime():
 
 def startbot():
 
-    jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device, jd_deprecated, jd_deprecatedport, al_user, al_pass = loadconfig()
+    jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device = loadconfig()
  
     interactive = "--docker" not in sys.argv
     if "--not-interactive" in sys.argv:
@@ -622,7 +594,7 @@ def startbot():
         if(interactive):
             print("Noch keine oder Fehlerhafte konfiguration, leite weiter zu Einstellungen")
             editconfig()
-            jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device, jd_deprecated, jd_deprecatedport, al_user, al_pass = loadconfig()
+            jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device = loadconfig()
         else:
             print("Keine oder fehlerhafte Konfiguration und Script ist nicht interaktiv, beende...")
             interactive = False
@@ -646,14 +618,8 @@ def startbot():
         else:
             print("Überspringe Anmeldung")
     else:
-        if(al_user is not None and al_pass is not None):
-            try:
-                al.login(al_user, al_pass)
-                print("Erfolgreich bei Anime-Loads angemeldet")
-            except:
-                print("Fehlerhafte Anmeldedaten, fahre mit anonymen Account fort")
-        else:
-            print("Keine Anmeldedaten für Anime-Loads hinterlegt, fahre mit anonymen Account fort")
+        print("Script wurde nicht interaktiv gestartet, überspringe Anmeldung..")
+        interactive = False
 
     if(jdhost == "" and myjd_pass == ""):
         if(interactive == False):
@@ -672,10 +638,7 @@ def startbot():
             except:
                 print("Fehlerhafte Logindaten")
     print("Erfolgreich eingeloggt")
-    if (jd_deprecated and jd_deprecatedport == ""):
-        print("Kein JD port gesetzt. beende...")
-        sys.exit(1)
-
+    
     while(True):
         os.makedirs(os.path.dirname(botfolder), exist_ok=True)
         f = open(botfile, "r")
@@ -699,10 +662,6 @@ def startbot():
                 except:
                     customPackage = ""
                 try:
-                    destinationFolder = animeentry['destinationFolder']
-                except:
-                    destinationFolder = None
-                try:
                     anime = al.getAnime(url)
                     release = anime.getReleases()[releaseID-1]
                 except:
@@ -722,9 +681,9 @@ def startbot():
                         log("[DOWNLOAD] Lade fehlende Episode " + str(missingEpisode) + " von " + name, pb)
                         try:
                             if(myjd_user != ""):
-                                dl_ret = anime.downloadEpisode(missingEpisode, release, hoster, browser, browserlocation, myjd_user=myjd_user, myjd_pw=myjd_pass, myjd_device=myjd_device,jd_deprecated=jd_deprecated,jd_deprecatedport=jd_deprecatedport, pkgName=customPackage, destinationFolder=destinationFolder)
+                                dl_ret = anime.downloadEpisode(missingEpisode, release, hoster, browser, browserlocation, myjd_user=myjd_user, myjd_pw=myjd_pass, myjd_device=myjd_device, pkgName=customPackage)
                             else:
-                                dl_ret = anime.downloadEpisode(missingEpisode, release, hoster, browser, browserlocation, jdhost, jd_deprecated=jd_deprecated,jd_deprecatedport=jd_deprecatedport, pkgName=customPackage, destinationFolder=destinationFolder)
+                                dl_ret = anime.downloadEpisode(missingEpisode, release, hoster, browser, browserlocation, jdhost, pkgName=customPackage)
                         except Exception as e:
                             printException(e)
                             dl_ret = False
@@ -747,9 +706,9 @@ def startbot():
                         print("[DOWNLOAD] Lade episode " + str(i) + " von " + name)
                         try:
                             if(myjd_user != ""):
-                                dl_ret = anime.downloadEpisode(i, release, hoster, browser, browserlocation, myjd_user=myjd_user, myjd_pw=myjd_pass, myjd_device=myjd_device,jd_deprecated=jd_deprecated,jd_deprecatedport=jd_deprecatedport, pkgName=customPackage, destinationFolder=destinationFolder)
+                                dl_ret = anime.downloadEpisode(i, release, hoster, browser, browserlocation, myjd_user=myjd_user, myjd_pw=myjd_pass, myjd_device=myjd_device, pkgName=customPackage)
                             else:
-                                dl_ret = anime.downloadEpisode(i, release, hoster, browser, browserlocation, jdhost, pkgName=customPackage,jd_deprecated=jd_deprecated,jd_deprecatedport=jd_deprecatedport, destinationFolder=destinationFolder)
+                                dl_ret = anime.downloadEpisode(i, release, hoster, browser, browserlocation, jdhost, pkgName=customPackage)
                         except Exception as e:
                             printException(e)
                             dl_ret = False
@@ -778,12 +737,12 @@ def startbot():
             time.sleep(timedelay)
 
 def removeAnime():
-    jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device, al_user, al_pass = loadconfig()
+    jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device = loadconfig()
  
     while(jdhost == False):
         print("Noch keine oder Fehlerhafte konfiguration, leite weiter zu Einstellungen")
         editconfig()
-        jdhost, hoster, browser, browserlocation, pushkey, timedelay, myjd_user, myjd_pass, myjd_device, al_user, al_pass = loadconfig()
+        jdhost, hoster, browser, browserlocation, timedelay, myjd_user, myjd_pass, myjd_device = loadconfig()
 
     os.makedirs(os.path.dirname(botfolder), exist_ok=True)
     f = open(botfile, "r")
