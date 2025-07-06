@@ -22,6 +22,8 @@ import os, sys
 from urllib.parse import unquote
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import selenium.webdriver.chrome.options
 import selenium.webdriver.firefox.options
@@ -47,18 +49,20 @@ class animeloads:
         if(user != "" and pw != ""):
             self.login(self.user, self.pw)
 
-        if(browser == animeloads.CHROME):
+        if browser == animeloads.CHROME:
             options = selenium.webdriver.chrome.options.Options()
             options.headless = True
-            if(browserloc != ""):
+            if browserloc != "":
                 options.binary_location = browserloc
-            driver = webdriver.Chrome(service_log_path=os.devnull, options=options)
-        elif(browser == animeloads.FIREFOX):
+            service = webdriver.chrome.service.Service(log_path=os.devnull)
+            driver = webdriver.Chrome(service=service, options=options)
+        elif browser == animeloads.FIREFOX:
             options = selenium.webdriver.firefox.options.Options()
             options.headless = True
-            if(browserloc != ""):
+            if browserloc != "":
                 options.binary_location = browserloc
-            driver = webdriver.Firefox(service_log_path=os.devnull, options=options)
+            service = webdriver.firefox.service.Service(log_path=os.devnull)
+            driver = webdriver.Firefox(service=service, options=options)
         else:
             raise ALInvalidBrowserException("Nicht unterstützter Browser")
 
@@ -925,18 +929,20 @@ class anime():
         ############################################################################
 
         #Create Headless browser to bypass adblock detection
-        if(browser == animeloads.CHROME):
+        if browser == animeloads.CHROME:
             options = selenium.webdriver.chrome.options.Options()
             options.headless = True
-            if(browserlocation != ""):
+            if browserlocation != "":
                 options.binary_location = browserlocation
-            driver = webdriver.Chrome(service_log_path=os.devnull, options=options)
-        elif(browser == animeloads.FIREFOX):
+            service = webdriver.chrome.service.Service(log_path=os.devnull)
+            driver = webdriver.Chrome(service=service, options=options)
+        elif browser == animeloads.FIREFOX:
             options = selenium.webdriver.firefox.options.Options()
             options.headless = True
-            if(browserlocation != ""):
+            if browserlocation != "":
                 options.binary_location = browserlocation
-            driver = webdriver.Firefox(service_log_path=os.devnull, options=options)
+            service = webdriver.firefox.service.Service(log_path=os.devnull)
+            driver = webdriver.Firefox(service=service, options=options)
         else:
             raise ALInvalidBrowserException("Nicht unterstützter Browser")
 
