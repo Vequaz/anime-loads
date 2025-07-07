@@ -2,7 +2,7 @@
 version: "2.1"
 services:
   anime-loads:
-    image: pfuenzle/anime-loads:latest
+    image: vequaz/anime-loads:latest
     container_name: anime-loads
     volumes:
       - .//config:/config
