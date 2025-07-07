@@ -5,7 +5,7 @@ RUN apt update \
 && apt install --no-install-recommends git wget libxslt-dev openexr ffmpeg libatlas-base-dev libopenjp2-7 libxt6 libgl1-mesa-glx libdbus-glib-1-2 libgtk-3-0 firefox-esr lbzip2 unzip -y \
 && apt clean \
 && rm -rf /var/lib/apt/lists/* \
-&& git clone https://github.com/Pfuenzle/anime-loads.git
+&& git clone https://github.com/vequaz/anime-loads.git
 
 WORKDIR /usr/src/app/anime-loads
 # get self-compiled geckodriver, as Mozilla doesn't provide an arm7 build anymore
