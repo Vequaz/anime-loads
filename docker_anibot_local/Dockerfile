@@ -6,11 +6,11 @@ RUN apt-get update -y
 
 RUN apt-get install firefox-esr -y
 
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux32.tar.gz
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux32.tar.gz
 
-RUN tar -xf geckodriver-v0.33.0-linux32.tar.gz
+RUN tar -xf geckodriver-v0.36.0-linux32.tar.gz
 
-RUN rm geckodriver-v0.33.0-linux32.tar.gz
+RUN rm geckodriver-v0.36.0-linux32.tar.gz
 
 RUN mv geckodriver /usr/bin/
 
