@@ -5,7 +5,7 @@ import myjdapi
 from lxml import etree
 from lxml import html
 
-from html_table_parser import HTMLTableParser
+from html_table_parser.parser import HTMLTableParser
 
 import subprocess
 
@@ -22,10 +22,8 @@ import os, sys
 from urllib.parse import unquote
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-import selenium.webdriver.chrome.options
 import selenium.webdriver.firefox.options
 
 
@@ -35,7 +33,6 @@ import time, json, hashlib, cv2, numpy, shutil
 class animeloads:
 
     FIREFOX = 0
-    CHROME = 1
     DDOWNLOAD = 0
     RAPIDGATOR = 1
 
@@ -49,14 +46,7 @@ class animeloads:
         if(user != "" and pw != ""):
             self.login(self.user, self.pw)
 
-        if browser == animeloads.CHROME:
-            options = selenium.webdriver.chrome.options.Options()
-            options.headless = True
-            if browserloc != "":
-                options.binary_location = browserloc
-            service = webdriver.chrome.service.Service(log_path=os.devnull)
-            driver = webdriver.Chrome(service=service, options=options)
-        elif browser == animeloads.FIREFOX:
+        if browser == animeloads.FIREFOX:
             options = selenium.webdriver.firefox.options.Options()
             options.headless = True
             if browserloc != "":
@@ -421,7 +411,7 @@ return xhr.response"
         message = ""
         reflinks = ""
         content_ddl = ""
-        content_rappid = ""
+        content_rapid = ""
 
         response_json = json.loads(ajaxresponse)
 
@@ -867,11 +857,14 @@ class anime():
                 + ", [Maingenre]: " + self.mainGenre + ", [Sidegenres]: " + str(self.sideGenres) + ", [Tags]: " + str(self.tags))
 
 
-    def downloadEpisode(self, episode, release, hoster, browser, browserlocation="", jdhost="", myjd_user="", myjd_pw="", myjd_device="",jd_deprecated=False,jd_deprecatedport="3128", pkgName="", destinationFolder=""):
+    def downloadEpisode(self, episode, release, hoster, browser, browserlocation="", jdhost="", myjd_user="", myjd_pw="", myjd_device="", jd_deprecated=False, jd_deprecatedport="3128", pkgName="", destinationFolder=""):
         if(browser == "Firefox"):
             browser = animeloads.FIREFOX
-        elif(browser == "Chrome"):
-            browser = animeloads.CHROME
+        else:
+            # Entfernt die Chrome-Option und behandelt alles andere als ungültig
+            # (wird später durch ALInvalidBrowserException abgefangen)
+            pass
+            
         try:
             if("ddownload" in hoster.lower()):
                 hoster = animeloads.DDOWNLOAD
@@ -929,14 +922,7 @@ class anime():
         ############################################################################
 
         #Create Headless browser to bypass adblock detection
-        if browser == animeloads.CHROME:
-            options = selenium.webdriver.chrome.options.Options()
-            options.headless = True
-            if browserlocation != "":
-                options.binary_location = browserlocation
-            service = webdriver.chrome.service.Service(log_path=os.devnull)
-            driver = webdriver.Chrome(service=service, options=options)
-        elif browser == animeloads.FIREFOX:
+        if browser == animeloads.FIREFOX:
             options = selenium.webdriver.firefox.options.Options()
             options.headless = True
             if browserlocation != "":
