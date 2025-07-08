@@ -1,0 +1,36 @@
+<Container>
+  <Name>anime-loads</Name>
+  <Repository>vequaz/anime-loads:latest</Repository>
+  <Registry></Registry>
+  <Network>bridge</Network>
+  <MyIP></MyIP>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/vequaz/anime-loads</Support>
+  <Overview>Automatisiertes Tool zum Verwalten und Herunterladen von Anime-Inhalten über anime-loads.org mit Selenium und Firefox.</Overview>
+  <Category>MediaTools:Downloaders</Category>
+  <WebUI></WebUI>
+  <Icon></Icon>
+  <ExtraParams></ExtraParams>
+  <PostArgs></PostArgs>
+  <CPUset></CPUset>
+  <DateInstalled></DateInstalled>
+  <DonateText></DonateText>
+  <DonateLink></DonateLink>
+  <Requires></Requires>
+  <Environment>
+    <Variable>
+      <Name>TZ</Name>
+      <Value>Europe/Berlin</Value>
+      <Mode>rw</Mode>
+    </Variable>
+  </Environment>
+  <Data>
+    <Volume>
+      <HostDir>/mnt/user/appdata/anime-loads</HostDir>
+      <ContainerDir>/config</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+  </Data>
+  <Config Name="TZ" Target="TZ" Default="Europe/Berlin" Mode="rw" Description="Zeitzone" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="Konfiguration" Target="/config" Default="/mnt/user/appdata/anime-loads" Mode="rw" Description="Ort der ani.json Konfiguration" Type="Path" Display="always" Required="true" Mask="false"/>
+</Container>
