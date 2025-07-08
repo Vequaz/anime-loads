@@ -1,21 +1,23 @@
 {
+    "settings": {
+        "hoster": 0,
+        "browserengine": 0,
+        "browserlocation": "",
+        "timedelay": 600,
+        "myjd_user": "your_jd_user",
+        "myjd_pw": "your_jd_password",
+        "myjd_device": "your_device_name",
+        "al_user": "your_animeloads_user",
+        "al_pass": "your_animeloads_password"
+    },
     "anime": [
         {
-            "episodes": 12,
-            "missing": [
-                12
-            ],
-            "name": "No Game No Life",
-            "releaseID": 12,
-            "url": "https://www.anime-loads.org/media/no-game-no-life"
+            "name": "Example Anime",
+            "url": "https://example.com/anime/123",
+            "releaseID": 1,
+            "customPackage": "",
+            "missing": [],
+            "episodes": 0
         }
-    ],
-    "settings": {
-        "browserengine": "Chrome",
-        "browserlocation": "",
-        "hoster": 1,
-        "jdhost": "127.0.0.1",
-        "pushbullet_apikey": "",
-        "timedelay": 500
-    }
+    ]
 }
