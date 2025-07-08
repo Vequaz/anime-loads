@@ -1,9 +1,10 @@
----
-version: "2.1"
+version: '3.7'
 services:
   anime-loads:
-    image: vequaz/anime-loads:latest
+    build: .
     container_name: anime-loads
     volumes:
-      - .//config:/config
+      - /mnt/user/appdata/anime-loads:/config
+    environment:
+      - TZ=Europe/Berlin
     restart: unless-stopped
