@@ -44,15 +44,21 @@ class animeloads:
         if(user != "" and pw != ""):
             self.login(self.user, self.pw)
 
+        from selenium.webdriver.firefox.service import Service
+        from selenium.webdriver.firefox.options import Options
+
         if browser == animeloads.FIREFOX:
-            options = selenium.webdriver.firefox.options.Options()
-            options.headless = True
+            options = Options()
+            options.add_argument("--headless")                     # HEADLESS wichtig
+            options.add_argument("--no-sandbox")                   # Container-spezifisch
+            options.add_argument("--disable-dev-shm-usage")        # Gegen /dev/shm Fehler
+
             if browserloc != "":
                 options.binary_location = browserloc
-            service = webdriver.firefox.service.Service(log_path=os.devnull)
+
+            service = Service(log_path="/usr/src/app/geckodriver.log")  # für Debugging
             driver = webdriver.Firefox(service=service, options=options)
-        else:
-            raise ALInvalidBrowserException("Nicht unterstützter Browser")
+
 
         #Erster besuch auf der Seite, damit cookies hinzugefügt werden können
         driver.get("https://www.anime-loads.org/assets/pub/images/logo.png")
@@ -260,10 +266,10 @@ class utils:
             return True
 
     @staticmethod
-    def addToMYJD(myjd_user, myjd_pass, myjd_device, links, pkgName, pwd, destinationFolder=None):
+    def addToMYJD(myjd_user, myjd_pw, myjd_device, links, pkgName, pwd, destinationFolder=None):
         jd=myjdapi.Myjdapi()
         jd.set_app_key("animeloads")
-        jd.connect(myjd_user, myjd_pass)
+        jd.connect(myjd_user, myjd_pw)
         jd.update_devices()
 
         device=jd.get_device(myjd_device)
@@ -919,13 +925,18 @@ class anime():
         #Solange wird dieser Code benutzt, benötigt einen Browser, funktioniert aber
         ############################################################################
 
-        #Create Headless browser to bypass adblock detection
+        # Create Headless browser to bypass adblock detection
         if browser == animeloads.FIREFOX:
-            options = selenium.webdriver.firefox.options.Options()
-            options.headless = True
+            options = Options()
+            options.add_argument("--headless")  # WICHTIG im Docker
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+
             if browserlocation != "":
                 options.binary_location = browserlocation
-            service = webdriver.firefox.service.Service(log_path=os.devnull)
+
+            # Log für Debugging (nicht os.devnull!)
+            service = Service(log_path="/usr/src/app/geckodriver.log")
             driver = webdriver.Firefox(service=service, options=options)
         else:
             raise ALInvalidBrowserException("Nicht unterstützter Browser")
