@@ -4,8 +4,11 @@ import animeloads
 from animeloads import animeloads
 import myjdapi
 
-botfile = "config/ani.json"
-botfolder = "config/"
+#Host: /mnt/user/appdata/animeloads/config
+#Container: /anime-loads/config
+
+botfile = "/anime-loads/config/ani.json"
+botfolder = "/anime-loads/config"
 
 def log(message):
     print(message)
@@ -51,10 +54,10 @@ def loadconfig():
         browserlocation = settings['browserlocation']
         timedelay = settings['timedelay']
         myjd_user = settings['myjd_user']
-        myjd_pass = settings['myjd_pw']
+        myjd_pw = settings['myjd_pw']
         myjd_device = settings['myjd_device']
         
-        return hoster, browser, browserlocation, timedelay, myjd_user, myjd_pass, myjd_device, settings
+        return hoster, browser, browserlocation, timedelay, myjd_user, myjd_pw, myjd_device, settings
         
     except json.JSONDecodeError as e:
         print(f"Fehler: Die Konfigurationsdatei {botfile} ist ungültig oder beschädigt")
@@ -67,7 +70,7 @@ def loadconfig():
 
 def startbot():
     try:
-        hoster, browser, browserlocation, timedelay, myjd_user, myjd_pass, myjd_device, settings = loadconfig()
+        hoster, browser, browserlocation, timedelay, myjd_user, myjd_pw, myjd_device, settings = loadconfig()
     except Exception as e:
         print("Konfiguration konnte nicht geladen werden")
         printException(e)
@@ -77,12 +80,12 @@ def startbot():
     jd = myjdapi.Myjdapi()
     jd.set_app_key("animeloads")
     
-    if not myjd_pass:
+    if not myjd_pw:
         print("MyJDownloader Passwort fehlt in der Konfiguration")
         sys.exit(1)
     
     try:
-        jd.connect(myjd_user, myjd_pass)
+        jd.connect(myjd_user, myjd_pw)
     except Exception as e:
         print("Verbindung zu MyJDownloader fehlgeschlagen")
         printException(e)
@@ -137,7 +140,7 @@ def startbot():
                             try:
                                 dl_ret = anime.downloadEpisode(
                                     missingEpisode, release, hoster, browser, browserlocation,
-                                    myjd_user=myjd_user, myjd_pw=myjd_pass, 
+                                    myjd_user=myjd_user, myjd_pw=myjd_pw, 
                                     myjd_device=myjd_device, pkgName=customPackage
                                 )
                                 if dl_ret:
@@ -156,7 +159,7 @@ def startbot():
                             try:
                                 dl_ret = anime.downloadEpisode(
                                     i, release, hoster, browser, browserlocation,
-                                    myjd_user=myjd_user, myjd_pw=myjd_pass, 
+                                    myjd_user=myjd_user, myjd_pw=myjd_pw, 
                                     myjd_device=myjd_device, pkgName=customPackage
                                 )
                                 if dl_ret:
