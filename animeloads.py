@@ -1,34 +1,32 @@
-import requests, http.cookiejar
-
-import myjdapi
-
-from lxml import etree
-from lxml import html
-
-from html_table_parser.parser import HTMLTableParser
-
-import subprocess
-
-from Cryptodome.Cipher import AES
-from binascii import unhexlify
-import base64
-
-import numpy, random, time
-
+# Standardbibliotheken
+import os
+import sys
 import re
-
-import os, sys
-
+import time
+import json
+import hashlib
+import shutil
+import random
+import base64
+import subprocess
+from binascii import unhexlify
 from urllib.parse import unquote
 
+# Drittanbieter-Bibliotheken
+import requests
+import http.cookiejar
+import numpy
+import cv2
+from lxml import etree, html
+from html_table_parser.parser import HTMLTableParser
+from Cryptodome.Cipher import AES
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import selenium.webdriver.firefox.options
 
-
-#captcha
-import time, json, hashlib, cv2, numpy, shutil
+# Eigene Module
+import myjdapi
 
 class animeloads:
 
